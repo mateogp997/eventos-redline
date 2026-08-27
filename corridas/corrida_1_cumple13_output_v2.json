@@ -1,0 +1,47 @@
+{
+  "evento": {
+    "fecha": "2026-09-02",
+    "dia_semana": "miércoles",
+    "categoria_dia": "semana",
+    "horario": "no indicado",
+    "personas_corren": 8,
+    "personas_comen": 8
+  },
+  "simuladores": {
+    "modalidad": "individual",
+    "sesiones": [
+      { "duracion_min": 60, "cantidad": 8, "precio_unitario": 29000, "subtotal": 232000 },
+      { "duracion_min": 30, "cantidad": 8, "precio_unitario": 19000, "subtotal": 152000 }
+    ],
+    "subtotal": 384000
+  },
+  "comida": {
+    "items": [
+      { "producto": "Norris Simple", "cantidad": 8, "precio_unitario": 13000, "subtotal": 104000 },
+      { "producto": "Papas Clasicas", "cantidad": 2, "precio_unitario": 8500, "subtotal": 17000 },
+      { "producto": "Cheddar", "cantidad": 2, "precio_unitario": 1200, "subtotal": 2400 }
+    ],
+    "subtotal": 123400
+  },
+  "bebida": {
+    "items": [
+      { "producto": "Gaseosa", "cantidad": 16, "precio_unitario": 4500, "subtotal": 72000 }
+    ],
+    "subtotal": 72000
+  },
+  "subtotal_lista": 579400,
+  "descuentos": [
+    { "concepto": "Evento día de semana 30%", "porcentaje": 30, "monto": 173820 }
+  ],
+  "total": 405580,
+  "sena_50": 202800,
+  "estado": "incompleto",
+  "datos_faltantes": ["hora de inicio del evento"],
+  "faltantes": [],
+  "alertas": [
+    "Fecha: 'miércoles que viene' interpretado como 2026-09-02; horario de cena sin hora de inicio, bloque total 2h (60 min sim + 30 min comida + 30 min sim) con 8 sims en simultáneo.",
+    "Hamburguesa 'a elección' sin nombre: se cotizó Norris Simple (la más económica); el precio sube según la elegida.",
+    "Papas: se respetaron las 2 porciones con cheddar para la mesa ofrecidas por Redline (no el supuesto de 1 cada 2 personas).",
+    "Bebida sin alcohol sin cantidad: supuesto 2 gaseosas por persona; si el paquete contempla 1 por persona, restar 36.000 a precio de lista."
+  ]
+}

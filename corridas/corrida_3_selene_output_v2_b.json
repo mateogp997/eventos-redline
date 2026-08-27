@@ -1,0 +1,31 @@
+{
+  "evento": {
+    "fecha": "2026-10-20",
+    "dia_semana": "martes",
+    "categoria_dia": "semana",
+    "horario": "no indicado",
+    "personas_corren": 15,
+    "personas_comen": 15
+  },
+  "simuladores": {
+    "modalidad": "por_turnos",
+    "sesiones": [ { "duracion_min": 120, "cantidad": 8, "precio_unitario": 49000, "subtotal": 392000 } ],
+    "subtotal": 392000
+  },
+  "comida": {
+    "items": [ { "producto": "Box Cafe (Cafe + Tost)", "cantidad": 15, "precio_unitario": 11900, "subtotal": 178500 } ],
+    "subtotal": 178500
+  },
+  "bebida": {
+    "items": [],
+    "subtotal": 0
+  },
+  "subtotal_lista": 570500,
+  "descuentos": [ { "concepto": "Evento día de semana 30%", "porcentaje": 30, "monto": 171150 } ],
+  "total": 399350,
+  "sena_50": 199700,
+  "estado": "incompleto",
+  "datos_faltantes": ["cantidad final de invitados (15 varones o 30 con las nenas)", "horario de inicio (dijeron 'a la salida del cole' sin hora)", "elección de merienda por persona"],
+  "faltantes": ["Paquete 'Pro Bday' a $35.000 por persona ofrecido en el hilo: no figura en la carta, no se usó", "Chipa (opción de merienda ofrecida, sin precio en carta)", "Wrap (opción de merienda ofrecida, sin precio en carta)"],
+  "alertas": ["Se cotizó el escenario de 15 varones y 2 horas (el que el cliente aprobó); si vienen las nenas (30 personas, local cerrado 3 horas) hay que cotizar aparte.", "Por turnos: 8 sims × 120 min = 960 min entre 15 personas ≈ 64 min de corrida por persona; el cronograma ofrecido da 30 min por grupo más mini torneo.", "Merienda sin detalle: se cotizó Box Café por persona (bebida incluida); tostado/medialunas/budín de la carta salen más baratos si eligen esas opciones.", "Total parcial: la propuesta cerrada de $35.000 por persona que ya se ofreció no está en la carta, se cotizó por consumo."]
+}

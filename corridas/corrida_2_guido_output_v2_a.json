@@ -1,0 +1,42 @@
+{
+  "evento": {
+    "fecha": "2026-08-15",
+    "dia_semana": "sábado",
+    "categoria_dia": "fin_de_semana",
+    "horario": "18:00-20:30",
+    "personas_corren": 8,
+    "personas_comen": 8
+  },
+  "simuladores": {
+    "modalidad": "individual",
+    "sesiones": [
+      { "duracion_min": 60, "cantidad": 16, "precio_unitario": 29000, "subtotal": 464000 }
+    ],
+    "subtotal": 464000
+  },
+  "comida": {
+    "items": [
+      { "producto": "Box Cafe (Cafe + Tost)", "cantidad": 8, "precio_unitario": 11900, "subtotal": 95200 }
+    ],
+    "subtotal": 95200
+  },
+  "bebida": {
+    "items": [],
+    "subtotal": 0
+  },
+  "subtotal_lista": 559200,
+  "descuentos": [
+    { "concepto": "Evento fin de semana 10%", "porcentaje": 10, "monto": 55920 }
+  ],
+  "total": 503280,
+  "sena_50": 251700,
+  "estado": "incompleto",
+  "datos_faltantes": [],
+  "faltantes": ["Recargo por corte de 30 min en el medio del bloque de simuladores (mencionado por Redline en el hilo, sin precio en la lista)"],
+  "alertas": [
+    "Estructura acordada 1h simu + 30 min merienda + 1h simu (18:00-20:30): se cotizó como 2 sesiones de 60 min por simulador (8 sims × 2 = 16 sesiones) porque no son contiguas; si el sim queda reservado en el corte, se cotizaría distinto.",
+    "Redline mencionó un recargo por cortar en el medio; no figura en la lista de precios y no está incluido, el total es parcial hasta definirlo.",
+    "Merienda sin detalle: se cotizó Box Café por niño; la bebida está incluida en el box.",
+    "Se cotizaron 8 personas (niños confirmados); no se informaron adultos acompañantes que consuman."
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "evento": {
+    "fecha": "2026-09-02",
+    "dia_semana": "miércoles",
+    "categoria_dia": "semana",
+    "horario": "no indicado",
+    "personas_corren": 8,
+    "personas_comen": 8
+  },
+  "simuladores": {
+    "modalidad": "individual",
+    "sesiones": [
+      { "duracion_min": 60, "cantidad": 8, "precio_unitario": 29000, "subtotal": 232000 },
+      { "duracion_min": 30, "cantidad": 8, "precio_unitario": 19000, "subtotal": 152000 }
+    ],
+    "subtotal": 384000
+  },
+  "comida": {
+    "items": [
+      { "producto": "Norris Simple", "cantidad": 8, "precio_unitario": 13000, "subtotal": 104000 },
+      { "producto": "Papas Clásicas", "cantidad": 2, "precio_unitario": 8500, "subtotal": 17000 },
+      { "producto": "Cheddar", "cantidad": 2, "precio_unitario": 1200, "subtotal": 2400 }
+    ],
+    "subtotal": 123400
+  },
+  "bebida": {
+    "items": [
+      { "producto": "Gaseosas", "cantidad": 16, "precio_unitario": 4500, "subtotal": 72000 }
+    ],
+    "subtotal": 72000
+  },
+  "subtotal_lista": 579400,
+  "descuentos": [
+    { "concepto": "Evento día de semana 30%", "porcentaje": 30, "monto": 173820 }
+  ],
+  "total": 405580,
+  "sena_50": 202800,
+  "estado": "incompleto",
+  "datos_faltantes": ["horario de inicio (solo dicen 'cena')"],
+  "faltantes": [],
+  "alertas": [
+    "Fecha: 'miércoles que viene' interpretado como 2026-09-02 (hoy es miércoles 26/8); confirmar.",
+    "No hay paquetes cerrados de cumpleaños: se cotiza por consumo según carta con 30% de descuento de evento por ser día de semana.",
+    "Cronograma 1h sim + 30 min cena + 30 min sim: se cotizan 90 min por persona (60 + 30) en 8 sims simultáneos, bloque total aprox. 2 horas. Los 8 corren a la vez, sin turnos.",
+    "'Hamburguesa simple a elección' sin nombre: se cotizó Norris Simple; si eligen otra, el precio cambia según carta (13.000 a 16.000 por unidad).",
+    "Papas: se respetó el pedido de 2 porciones con cheddar para la mesa (Papas Clásicas + Cheddar), en lugar del supuesto habitual de 1 cada 2 personas.",
+    "Bebida sin alcohol sin cantidad: supuesto 2 gaseosas por persona (16 en total); ajustar si confirman.",
+    "El texto del cliente menciona 'agrandar el combo con cargo adicional': no existe ese combo en la carta; cualquier agregado (doble, medallón extra, papas) se cotiza por ítem de carta.",
+    "Son menores de edad: no se cotiza ni se sirve alcohol.",
+    "Esto es cotización, no reserva: se confirma con seña del 50% por Mercado Pago."
+  ]
+}

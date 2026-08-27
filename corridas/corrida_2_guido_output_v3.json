@@ -1,0 +1,33 @@
+{
+  "evento": {
+    "fecha": "2026-08-15",
+    "dia_semana": "sábado",
+    "categoria_dia": "fin_de_semana",
+    "horario": "18:00-20:30",
+    "personas_corren": 8,
+    "personas_comen": 8
+  },
+  "modo_cotizacion": "paquete",
+  "paquete": {
+    "nombre": "merienda",
+    "personas": 8,
+    "precio_unitario": 58000,
+    "subtotal": 464000
+  },
+  "simuladores": { "modalidad": "individual", "sesiones": [], "subtotal": 0 },
+  "comida": { "items": [], "subtotal": 0 },
+  "bebida": { "items": [], "subtotal": 0 },
+  "subtotal_lista": 464000,
+  "descuentos": [],
+  "total": 464000,
+  "sena_50": 232000,
+  "estado": "incompleto",
+  "datos_faltantes": [],
+  "faltantes": ["Recargo por cambio de cronograma: 30 min extra de simulador (1 h simu + 30 min merienda + 1 h simu); Redline quedó en pasar el costo, no cotizado. Total parcial."],
+  "alertas": [
+    "Se cotizó paquete Merienda base (1 h simu + 30 min merienda + 30 min simu) a $58.000 por niño, fin de semana; el cronograma pedido (1 h / 30 / 1 h) suma 30 min de simulador con recargo pendiente.",
+    "En el hilo Redline ofreció $36.400 por persona para la variante con corte en el medio: es menor al precio de lista del paquete Merienda de fin de semana; revisar antes de enviar.",
+    "Horario 18:00-20:30 según cronograma pedido; si se mantiene el paquete base, cierra 20:00.",
+    "Sin torta: no se cotiza la torta de $70.000; la merienda incluye tarjeta rookie de $20.000 para el cumpleañero."
+  ]
+}

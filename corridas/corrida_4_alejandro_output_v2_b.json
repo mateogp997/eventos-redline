@@ -1,0 +1,35 @@
+{
+  "evento": {
+    "fecha": "2026-08-23",
+    "dia_semana": "domingo",
+    "categoria_dia": "fin_de_semana",
+    "horario": "no indicado",
+    "personas_corren": 6,
+    "personas_comen": 6
+  },
+  "simuladores": {
+    "modalidad": "individual",
+    "sesiones": [ { "duracion_min": 60, "cantidad": 6, "precio_unitario": 29000, "subtotal": 174000 } ],
+    "subtotal": 174000
+  },
+  "comida": {
+    "items": [
+      { "producto": "Norris Simple", "cantidad": 6, "precio_unitario": 13000, "subtotal": 78000 },
+      { "producto": "Papas Clasicas", "cantidad": 2, "precio_unitario": 8500, "subtotal": 17000 },
+      { "producto": "Cheddar", "cantidad": 2, "precio_unitario": 1200, "subtotal": 2400 }
+    ],
+    "subtotal": 97400
+  },
+  "bebida": {
+    "items": [ { "producto": "Gaseosa", "cantidad": 12, "precio_unitario": 4500, "subtotal": 54000 } ],
+    "subtotal": 54000
+  },
+  "subtotal_lista": 325400,
+  "descuentos": [ { "concepto": "Evento fin de semana 10%", "porcentaje": 10, "monto": 32540 } ],
+  "total": 292860,
+  "sena_50": 146500,
+  "estado": "incompleto",
+  "datos_faltantes": ["horario de inicio", "elección de hamburguesa por persona"],
+  "faltantes": ["Precio cerrado de $53.100 por persona ofrecido en el hilo: no figura en la carta, no se usó"],
+  "alertas": ["Hamburguesa simple 'a elección': se cotizó Norris (la más económica); Senna simple sube a 16.000 por unidad.", "Papas: se respetó lo ofrecido por Redline, 2 Papas Clasicas con cheddar para compartir (en vez de 1 cada 2 personas).", "Bebida sin cantidad: supuesto 2 gaseosas por persona."]
+}

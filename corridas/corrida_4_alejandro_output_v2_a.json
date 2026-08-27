@@ -1,0 +1,46 @@
+{
+  "evento": {
+    "fecha": "2026-08-23",
+    "dia_semana": "domingo",
+    "categoria_dia": "fin_de_semana",
+    "horario": "no indicado",
+    "personas_corren": 6,
+    "personas_comen": 6
+  },
+  "simuladores": {
+    "modalidad": "individual",
+    "sesiones": [
+      { "duracion_min": 60, "cantidad": 6, "precio_unitario": 29000, "subtotal": 174000 }
+    ],
+    "subtotal": 174000
+  },
+  "comida": {
+    "items": [
+      { "producto": "Norris Simple", "cantidad": 6, "precio_unitario": 13000, "subtotal": 78000 },
+      { "producto": "Papas Clasicas", "cantidad": 2, "precio_unitario": 8500, "subtotal": 17000 },
+      { "producto": "Cheddar", "cantidad": 2, "precio_unitario": 1200, "subtotal": 2400 }
+    ],
+    "subtotal": 97400
+  },
+  "bebida": {
+    "items": [
+      { "producto": "Gaseosa", "cantidad": 6, "precio_unitario": 4500, "subtotal": 27000 }
+    ],
+    "subtotal": 27000
+  },
+  "subtotal_lista": 298400,
+  "descuentos": [
+    { "concepto": "Evento fin de semana 10%", "porcentaje": 10, "monto": 29840 }
+  ],
+  "total": 268560,
+  "sena_50": 134300,
+  "estado": "incompleto",
+  "datos_faltantes": ["horario del evento", "qué hamburguesa simple elige cada uno"],
+  "faltantes": [],
+  "alertas": [
+    "Hamburguesa simple 'a elección' sin definir: se cotizó Norris Simple (la más económica); si eligen otra, sube hasta $3.000 por unidad.",
+    "Papas: se respetaron las 2 porciones para compartir ofrecidas por Redline, cotizadas como Papas Clasicas + Cheddar extra (no existe 'papas con cheddar' como ítem de carta).",
+    "Bebida sin alcohol: 1 por persona según la oferta de Redline (no el supuesto de 2); ajustar si confirman cantidad.",
+    "La oferta de Redline de $53.100 por persona (6 × $53.100 = $318.600) queda por encima del precio de lista con descuento de evento ($268.560); revisar cuál se comunica."
+  ]
+}

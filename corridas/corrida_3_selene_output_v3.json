@@ -1,0 +1,38 @@
+{
+  "evento": {
+    "fecha": "2026-10-20",
+    "dia_semana": "martes",
+    "categoria_dia": "semana",
+    "horario": "no indicado",
+    "personas_corren": 30,
+    "personas_comen": 30
+  },
+  "modo_cotizacion": "carta",
+  "paquete": { "nombre": "ninguno", "personas": 0, "precio_unitario": 0, "subtotal": 0 },
+  "simuladores": {
+    "modalidad": "por_turnos",
+    "sesiones": [
+      { "duracion_min": 120, "cantidad": 8, "precio_unitario": 49000, "subtotal": 392000 },
+      { "duracion_min": 60, "cantidad": 8, "precio_unitario": 29000, "subtotal": 232000 }
+    ],
+    "subtotal": 624000
+  },
+  "comida": {
+    "items": [ { "producto": "Box Cafe (Cafe + Tost)", "cantidad": 30, "precio_unitario": 11900, "subtotal": 357000 } ],
+    "subtotal": 357000
+  },
+  "bebida": { "items": [], "subtotal": 0 },
+  "subtotal_lista": 981000,
+  "descuentos": [ { "concepto": "Evento día de semana 30%", "porcentaje": 30, "monto": 294300 } ],
+  "total": 686700,
+  "sena_50": 343400,
+  "estado": "incompleto",
+  "datos_faltantes": ["cantidad definitiva de chicos (15 o 30)", "horario de inicio"],
+  "faltantes": ["Cargo por cierre exclusivo del local ofrecido por Redline: sin precio en la carta, no cotizado. Total parcial."],
+  "alertas": [
+    "Se cotizó la variante de 30 chicos (supera los 16 del Pro Bday → carta): 8 sims × 180 min (120+60) = 1.440 min entre 30 ≈ 48 min de corrida por persona.",
+    "Merienda sin detalle: se cotizó Box Café por persona, bebida incluida en el box.",
+    "Variante 15 chicos: aplica Pro Bday lunes a jueves $35.000 × 15 = $525.000 (Redline escribió '10' en el hilo, pero el grupo son 15).",
+    "Fecha: martes 20/10 interpretado como 2026-10-20; horario 'a la salida del cole' sin hora definida."
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "evento": {
+    "fecha": "2026-09-02",
+    "dia_semana": "miércoles",
+    "categoria_dia": "semana",
+    "horario": "no indicado",
+    "personas_corren": 8,
+    "personas_comen": 8
+  },
+  "simuladores": {
+    "modalidad": "individual",
+    "sesiones": [
+      { "duracion_min": 60, "cantidad": 8, "precio_unitario": 29000, "subtotal": 232000 },
+      { "duracion_min": 30, "cantidad": 8, "precio_unitario": 19000, "subtotal": 152000 }
+    ],
+    "subtotal": 384000
+  },
+  "comida": {
+    "items": [
+      { "producto": "Norris Simple", "cantidad": 8, "precio_unitario": 13000, "subtotal": 104000 },
+      { "producto": "Papas Clasicas", "cantidad": 2, "precio_unitario": 8500, "subtotal": 17000 },
+      { "producto": "Cheddar", "cantidad": 2, "precio_unitario": 1200, "subtotal": 2400 }
+    ],
+    "subtotal": 123400
+  },
+  "bebida": {
+    "items": [
+      { "producto": "Gaseosa", "cantidad": 16, "precio_unitario": 4500, "subtotal": 72000 }
+    ],
+    "subtotal": 72000
+  },
+  "subtotal_lista": 579400,
+  "descuentos": [
+    { "concepto": "Evento día de semana 30%", "porcentaje": 30, "monto": 173820 }
+  ],
+  "total": 405580,
+  "sena_50": 202800,
+  "estado": "incompleto",
+  "datos_faltantes": ["horario de inicio de la cena"],
+  "faltantes": [],
+  "alertas": [
+    "Fecha: 'miércoles que viene' interpretado como 2026-09-02 (día de semana, 30%). Bloque total 2 h: 60 min sim + 30 min cena + 30 min sim, 8 sims en simultáneo.",
+    "Hamburguesa 'a elección': se cotizó Norris Simple (13.000); Fangio/Kimi 14.000, Colapinto/Verstappen 15.000, Senna 16.000 por unidad.",
+    "Papas: se cotizaron 2 Papas Clasicas + 2 Cheddar para la mesa según pedido, no el supuesto de 1 porción cada 2 personas.",
+    "Gaseosa: supuesto 2 por persona; ajustar si confirman cantidad."
+  ]
+}

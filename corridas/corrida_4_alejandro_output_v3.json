@@ -1,0 +1,40 @@
+{
+  "evento": {
+    "fecha": "2026-08-23",
+    "dia_semana": "domingo",
+    "categoria_dia": "fin_de_semana",
+    "horario": "no indicado",
+    "personas_corren": 6,
+    "personas_comen": 6
+  },
+  "modo_cotizacion": "carta",
+  "paquete": { "nombre": "ninguno", "personas": 0, "precio_unitario": 0, "subtotal": 0 },
+  "simuladores": {
+    "modalidad": "individual",
+    "sesiones": [ { "duracion_min": 60, "cantidad": 6, "precio_unitario": 29000, "subtotal": 174000 } ],
+    "subtotal": 174000
+  },
+  "comida": {
+    "items": [
+      { "producto": "Norris Simple", "cantidad": 6, "precio_unitario": 13000, "subtotal": 78000 },
+      { "producto": "Papas Clasicas", "cantidad": 2, "precio_unitario": 8500, "subtotal": 17000 },
+      { "producto": "Cheddar", "cantidad": 2, "precio_unitario": 1200, "subtotal": 2400 }
+    ],
+    "subtotal": 97400
+  },
+  "bebida": {
+    "items": [ { "producto": "Gaseosa", "cantidad": 6, "precio_unitario": 4500, "subtotal": 27000 } ],
+    "subtotal": 27000
+  },
+  "subtotal_lista": 298400,
+  "descuentos": [ { "concepto": "Evento fin de semana 10%", "porcentaje": 10, "monto": 29840 } ],
+  "total": 268560,
+  "sena_50": 134300,
+  "estado": "incompleto",
+  "datos_faltantes": ["horario de inicio"],
+  "faltantes": [],
+  "alertas": [
+    "Redline ofreció en el hilo $53.100 por persona ($318.600 por 6); a precio de lista con 10% de evento da $268.560 ($44.760 por persona). Revisar cuál se envía: la propuesta del hilo queda por encima de la carta.",
+    "[respuesta cortada al copiar desde el chat; el resto de las alertas no se conservó]"
+  ]
+}
