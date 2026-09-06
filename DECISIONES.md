@@ -110,6 +110,28 @@ la motivaron — todas conservadas en `corridas/`.
   reproducción y comparación de modelos) se registran en `corridas/` con los checks del
   frontend — que ahora exigen `total_redondeado` — en verde.
 
+## Iteración 4 (6/9) — la propuesta en PDF con el diseño del folleto
+
+- **Pedido del dueño:** que el sistema complete el folleto oficial de cumpleaños con lo
+  cotizado, reemplazando las páginas de paquetes por una sola hoja de cotización con la
+  misma estética, para reenviar directo por WhatsApp (siempre tras revisión humana).
+- **Decisiones técnicas:** se construyó `datos/plantilla/propuesta_base.pdf` a partir del
+  folleto real (portada e intro + hoja de paquetes con el texto removido conservando el
+  arte, íconos y badge + aclaraciones y cierre). Las fuentes Formula1 embebidas en el
+  folleto son subsets (solo traen los glifos que el folleto usa: "Cumple de Guido" salía
+  "um le de uido"), así que el texto generado usa **Poppins** (Google Fonts, OFL, la más
+  cercana) y se conserva la **DryBrush** original para el acento script — eligiendo un
+  texto ("A tu medida") cuyos glifos existen completos en el subset.
+- **Cambio:** botón "Descargar propuesta (PDF)" en el frontend (pdf-lib + fontkit), campo
+  "Nombre del evento", contenido mapeado desde el JSON de la cotización (paquete/acordado/
+  carta, alertas, faltantes, total redondeado y seña centrados en el badge medido del
+  original). Ajuste del mismo día por feedback del dueño: el total del badge no estaba
+  centrado en el cuadro rojo — se midió el rectángulo real (x 96–501, y 648–721) y se
+  centra dentro de él.
+- **Verificación:** prototipo local aprobado por el dueño sobre el caso Guido; generación
+  en navegador probada (PDF de 7 páginas, ~4 MB). Pendiente: corrida real del dueño con
+  una cotización propia y envío de prueba.
+
 ## Alcance, supuestos y pendientes
 
 **Decisiones de alcance (con motivo):**

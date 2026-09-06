@@ -25,7 +25,10 @@ esa etapa y de la evolución a sistema completo está en [DECISIONES.md](DECISIO
    que faltan preguntar y alertas. **Si un dato o un precio no existe, no lo inventa.**
 4. El frontend **verifica la aritmética** (subtotales, descuento, seña, versión de precios)
    y muestra tokens y costo reales de la corrida.
-5. Un humano revisa y le responde al cliente. El sistema no habla con el cliente ni reserva.
+5. Con un clic, el operador puede bajar la **propuesta en PDF** con el diseño del folleto
+   oficial de cumpleaños (portada + página de cotización generada + aclaraciones + cierre),
+   lista para reenviar por WhatsApp. Plantilla y fuentes en `datos/plantilla/`.
+6. Un humano revisa y le responde al cliente. El sistema no habla con el cliente ni reserva.
 
 **Criterio observable de éxito:** el JSON valida contra el formato del contrato; todos los
 checks aritméticos del frontend en verde; `precios_version` coincide con la versión de

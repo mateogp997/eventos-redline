@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cotizador de eventos — Redline Racing</title>
+<script defer src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script defer src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
 <style>
   :root{
     --bg:#0d0d10; --panel:#17171b; --panel2:#1f1f25; --line:#2c2c33;
@@ -104,6 +106,8 @@
       <textarea id="hilo" placeholder="Cliente: Hola! Quiero hacer el cumple de mi hijo...&#10;Redline: ...&#10;Cliente: ..."></textarea>
       <label>Datos confirmados por otro canal (opcional)</label>
       <input type="text" id="confirmados" placeholder="ej: por audio confirmó que son 12 y no 10">
+      <label>Nombre del evento (para la propuesta en PDF)</label>
+      <input type="text" id="tituloEvento" placeholder="ej: Cumple de Guido">
     </div>
   </div>
 
@@ -126,6 +130,7 @@
       <div class="metricas" id="rMetricas"></div>
       <div class="acciones">
         <button class="ghost" id="btnRegistro">⬇ Descargar registro de corrida (.md)</button>
+        <button class="ghost" id="btnPropuesta">🏁 Descargar propuesta (PDF)</button>
         <button class="ghost" id="btnJson">Copiar JSON</button>
       </div>
       <details><summary>JSON crudo</summary><pre id="rJson"></pre></details>
@@ -440,7 +445,166 @@ function descargarRegistro(){
   URL.revokeObjectURL(a.href);
 }
 
+/* ---------- Propuesta en PDF (plantilla del folleto + cotización) ---------- */
+
+const PROP = {
+  base: "datos/plantilla/propuesta_base.pdf",
+  fuentes: { black: "datos/plantilla/Poppins-Black.ttf", bold: "datos/plantilla/Poppins-Bold.ttf",
+             italic: "datos/plantilla/Poppins-Italic.ttf", brush: "datos/plantilla/DryBrush.ttf" },
+  paginaCotizacion: 2, W: 595.276,
+  badge: { x0: 96.0, x1: 500.9 },
+  nombresPaquete: { merienda: "Paquete Merienda", cena: "Paquete Cena", pro_bday: "Paquete Pro Bday", acordado: "Precio acordado" }
+};
+let PROP_ASSETS = null;
+
+async function cargarAssetsPropuesta(){
+  if(PROP_ASSETS) return PROP_ASSETS;
+  const trae = async u => {
+    for(let i = 0; i < 2; i++){
+      try{
+        const r = await fetch(u);
+        if(!r.ok) throw new Error("no pude leer " + u);
+        return await r.arrayBuffer();
+      }catch(e){ if(i) throw e; await new Promise(res => setTimeout(res, 800)); }
+    }
+  };
+  const [basePdf, black, bold, italic, brush] = await Promise.all([
+    trae(PROP.base), trae(PROP.fuentes.black), trae(PROP.fuentes.bold), trae(PROP.fuentes.italic), trae(PROP.fuentes.brush)
+  ]);
+  PROP_ASSETS = { basePdf, black, bold, italic, brush };
+  return PROP_ASSETS;
+}
+
+function envolver(texto, font, size, ancho){
+  const palabras = String(texto).split(/\s+/); const lineas = []; let actual = "";
+  for(const p of palabras){
+    const prueba = actual ? actual + " " + p : p;
+    if(font.widthOfTextAtSize(prueba, size) <= ancho) actual = prueba;
+    else { if(actual) lineas.push(actual); actual = p; }
+  }
+  if(actual) lineas.push(actual);
+  return lineas;
+}
+
+async function construirPropuestaBytes(j, titulo){
+  const A = await cargarAssetsPropuesta();
+  const { PDFDocument, rgb } = PDFLib;
+  const pdf = await PDFDocument.load(A.basePdf);
+  pdf.registerFontkit(fontkit);
+  const fB = await pdf.embedFont(A.black, { subset: true });
+  const fN = await pdf.embedFont(A.bold, { subset: true });
+  const fI = await pdf.embedFont(A.italic, { subset: true });
+  const fS = await pdf.embedFont(A.brush, { subset: true });
+  const pag = pdf.getPage(PROP.paginaCotizacion);
+  const H = pag.getHeight();
+  const ROJO = rgb(225/255, 28/255, 31/255), BLANCO = rgb(243/255, 243/255, 243/255), PURO = rgb(1,1,1);
+  const put = (x, yTop, t, f, s, c) => pag.drawText(String(t), { x, y: H - yTop, size: s, font: f, color: c });
+  const centrar = (yTop, t, f, s, c, x0 = 0, x1 = PROP.W) =>
+    put(x0 + (x1 - x0 - f.widthOfTextAtSize(String(t), s)) / 2, yTop, t, f, s, c);
+
+  // encabezado
+  const tamTitulo = fB.widthOfTextAtSize(titulo, 36) > 480 ? 28 : 36;
+  centrar(88, titulo, fB, tamTitulo, PURO);
+  put(500 - fS.widthOfTextAtSize("A tu medida", 31), 114, "A tu medida", fS, 31, ROJO);
+  centrar(152, "Propuesta armada a tu medida,", fI, 13, ROJO);
+  centrar(169, "para festejar a toda velocidad.", fI, 13, ROJO);
+
+  // fecha / invitados bajo los iconos
+  const ev = j.evento || {};
+  let fechaLinea = "Fecha a confirmar", horaLinea = "Horario a definir";
+  if(/^\d{4}-\d{2}-\d{2}$/.test(ev.fecha||"")){
+    const [aa,mm,dd] = ev.fecha.split("-");
+    const dia = (ev.dia_semana||"").charAt(0).toUpperCase() + (ev.dia_semana||"").slice(1);
+    fechaLinea = (dia ? dia + " " : "") + Number(dd) + "/" + Number(mm);
+  } else if(ev.dia_semana){ fechaLinea = ev.dia_semana.charAt(0).toUpperCase()+ev.dia_semana.slice(1)+" a confirmar"; }
+  if(ev.horario && !/no indicado/i.test(ev.horario)) horaLinea = ev.horario.replace("-", " a ") + " hs";
+  centrar(249, fechaLinea, fI, 12.6, BLANCO, 160, 300);
+  centrar(265, horaLinea, fI, 12.6, BLANCO, 160, 300);
+  const invitados = Math.max(ev.personas_corren||0, ev.personas_comen||0);
+  centrar(249, invitados ? String(invitados) : "A confirmar", fI, 12.6, BLANCO, 300, 420);
+  centrar(265, "Invitados", fI, 12.6, BLANCO, 300, 420);
+
+  // cuerpo con cursor
+  const x0 = 39.4, anchoTexto = 516; let y = 308;
+  const seccion = t => { put(x0, y, t, fN, 16.5, ROJO); y += 30; };
+  const itemLinea = (t, conBarra=true) => {
+    const lineas = envolver(t, fI, 12.8, anchoTexto - 11);
+    lineas.forEach((ln, i) => {
+      if(y > 630) return;
+      if(i === 0 && conBarra) put(x0, y, "/ ", fN, 14, ROJO);
+      put(x0 + 11, y, ln, fI, 12.8, BLANCO); y += 22;
+    });
+    y += 4;
+  };
+  const rd = (typeof j.total_redondeado === "number") ? j.total_redondeado : j.total;
+
+  if(j.modo_cotizacion !== "carta" && j.paquete && j.paquete.subtotal){
+    const nom = PROP.nombresPaquete[j.paquete.nombre] || j.paquete.nombre;
+    put(x0, y, nom, fN, 16.5, ROJO);
+    put(x0 + fN.widthOfTextAtSize(nom, 16.5) + 12, y, "|  " + fmt(j.paquete.precio_unitario) + " por persona", fN, 15.5, BLANCO);
+    y += 30;
+    let desc = "";
+    if(j.modo_cotizacion === "acordado"){
+      desc = "Propuesta conversada por WhatsApp: el precio ya quedó acordado con vos.";
+    } else {
+      try{ desc = (JSON.parse(PRECIOS_JSON).paquetes[j.paquete.nombre]||{}).descripcion || ""; }catch(e){}
+    }
+    if(desc) envolver(desc, fI, 12.5, anchoTexto).forEach(ln => { put(x0, y, ln, fI, 12.5, BLANCO); y += 20; });
+    y += 10;
+  } else {
+    seccion("Detalle del presupuesto");
+    (j.simuladores?.sesiones||[]).forEach(s =>
+      itemLinea(s.cantidad + " sesiones de simulador de " + s.duracion_min + " min × " + fmt(s.precio_unitario) + " — " + fmt(s.subtotal)));
+    for(const r of ["comida","bebida"]) (j[r]?.items||[]).forEach(it =>
+      itemLinea(it.cantidad + " × " + it.producto + " — " + fmt(it.subtotal)));
+    (j.descuentos||[]).forEach(d => itemLinea(d.concepto + ": bonificamos " + fmt(d.monto)));
+    y += 6;
+  }
+
+  const notas = [];
+  (j.alertas||[]).forEach(a => notas.push(a));
+  (j.faltantes||[]).forEach(f => notas.push("Queda por cotizar: " + f));
+  if(j.estado === "incompleto" && (j.datos_faltantes||[]).length)
+    notas.push("Para cerrar el número necesitamos: " + j.datos_faltantes.join(", ") + ".");
+  if(notas.length && y < 600){ seccion("A tener en cuenta"); notas.slice(0,5).forEach(n => itemLinea(n)); }
+
+  if(y < 600){
+    seccion("El número final");
+    if(j.modo_cotizacion !== "carta" && j.paquete?.personas > 1)
+      itemLinea(j.paquete.personas + " invitados × " + fmt(j.paquete.precio_unitario) + " por persona.", false);
+    else
+      itemLinea("Subtotal " + fmt(j.subtotal_lista) + ((j.descuentos||[]).length ? " menos el descuento de evento." : "."), false);
+  }
+
+  // badge rojo: centrado real dentro del cuadro (y 648-721)
+  centrar(678, "Total: " + fmt(rd), fN, 22.6, PURO, PROP.badge.x0, PROP.badge.x1);
+  centrar(704, "Seña para reservar (50%, Mercado Pago): " + fmt(j.sena_50), fI, 12.8, PURO, PROP.badge.x0, PROP.badge.x1);
+  centrar(750, "Propuesta sujeta a disponibilidad. Válida por 72 horas.", fI, 10, BLANCO);
+
+  return pdf.save();
+}
+
+async function descargarPropuesta(){
+  if(!ultima) return setStatus("Primero cotizá.", true);
+  if(typeof PDFLib === "undefined" || typeof fontkit === "undefined")
+    return setStatus("Las librerías de PDF no cargaron todavía; probá de nuevo en unos segundos.", true);
+  const titulo = $("tituloEvento").value.trim() || "Tu evento en Redline";
+  setStatus("Armando la propuesta…");
+  try{
+    const bytes = await construirPropuestaBytes(ultima.json, titulo);
+    const blob = new Blob([bytes], { type: "application/pdf" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "Propuesta Redline - " + titulo.replace(/[^\wáéíóúñÁÉÍÓÚÑ -]/g, "") + ".pdf";
+    a.click(); URL.revokeObjectURL(a.href);
+    setStatus("Propuesta descargada. Revisala antes de mandarla al cliente.");
+  }catch(e){
+    setStatus("Error armando la propuesta: " + e.message, true);
+  }
+}
+
 $("btnCotizar").addEventListener("click", cotizar);
+$("btnPropuesta").addEventListener("click", descargarPropuesta);
 $("btnRegistro").addEventListener("click", descargarRegistro);
 $("btnJson").addEventListener("click", ()=>{ if(ultima) navigator.clipboard.writeText(JSON.stringify(ultima.json,null,2)); });
 $("proveedor").addEventListener("change", poblarModelos);
