@@ -91,10 +91,10 @@ Nivel de delegación: **L2 — ejecutar con revisión.**
 ## Análisis económico
 
 **Tarifas de API** (páginas de precios de Anthropic y de Google, consultadas el 6/9/2026,
-USD por millón de tokens): `gemini-2.5-flash` entrada 0,30 / salida 2,50 y
-`gemini-2.5-pro` 1,25 / 10,00 — ambos además con **free tier** (costo 0 dentro de los
-límites de cuota) · `claude-haiku-4-5` 1,00 / 5,00 · `claude-sonnet-4-5` 3,00 / 15,00 ·
-`claude-fable-5` 5,00 / 25,00. El frontend calcula y muestra el costo exacto de cada
+USD por millón de tokens): `gemini-3.6-flash` entrada 0,75 / salida 3,75 (precio
+introductorio hasta el 31/12/2026; desde 2027: 1,50 / 7,50) — además con **free tier**
+(costo 0 dentro de los límites de cuota) · `claude-haiku-4-5` 1,00 / 5,00 ·
+`claude-sonnet-4-5` 3,00 / 15,00 · `claude-fable-5` 5,00 / 25,00. El frontend calcula y muestra el costo exacto de cada
 corrida con estas tarifas (y aclara cuando la corrida salió del free tier); los consumos
 reales por corrida quedan en cada registro de [corridas/](corridas/) (campo Tokens).
 

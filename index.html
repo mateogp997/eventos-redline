@@ -148,10 +148,11 @@ const fmt = n => "$" + Number(n||0).toLocaleString("es-AR");
 const PROVEEDORES = {
   gemini: {
     etiqueta: "Google Gemini",
-    modelos: ["gemini-2.5-flash", "gemini-2.5-pro"],
+    /* gemini-2.5-* quedaron cerrados para cuentas nuevas (la API lo rechaza y sugiere 3.6).
+       Tarifa de 3.6-flash: precio introductorio vigente hasta el 31/12/2026. */
+    modelos: ["gemini-3.6-flash", "gemini-3.6-pro"],
     tarifas: {
-      "gemini-2.5-flash": { in: 0.30, out: 2.50, freeTier: true },
-      "gemini-2.5-pro":   { in: 1.25, out: 10.00, freeTier: true }
+      "gemini-3.6-flash": { in: 0.75, out: 3.75, freeTier: true }
     },
     keyHint: 'Clave gratis en <a href="https://aistudio.google.com" target="_blank" rel="noopener">aistudio.google.com</a> → "Get API key". El free tier alcanza de sobra para este volumen.',
     placeholder: "AIza..."
