@@ -223,9 +223,14 @@ function modeloElegido(){
 
 function parsearSalida(texto){
   let t = texto.trim();
-  const m = t.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if(m) t = m[1].trim();
-  return JSON.parse(t);
+  t = t.replace(/^```(?:json)?\s*/i, "").replace(/\s*```\s*$/, "");
+  const ini = t.indexOf("{"), fin = t.lastIndexOf("}");
+  if(ini === -1 || fin <= ini) throw new Error("la respuesta no contiene un JSON completo (posible salida truncada) — probá de nuevo");
+  try{
+    return JSON.parse(t.slice(ini, fin + 1));
+  }catch(e){
+    throw new Error("JSON inválido o truncado: " + e.message + " — probá de nuevo");
+  }
 }
 
 async function llamarAnthropic(key, modelo, system, user){
@@ -258,7 +263,7 @@ async function llamarGemini(key, modelo, system, user){
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: system }] },
       contents: [{ role: "user", parts: [{ text: user }] }],
-      generationConfig: { temperature: 0, maxOutputTokens: 3000 }
+      generationConfig: { temperature: 0, maxOutputTokens: 8192, responseMimeType: "application/json" }
     })
   });
   const data = await resp.json();
