@@ -47,17 +47,19 @@ aparecen en `datos_faltantes`/`faltantes` en lugar de inventarse.
 
 ## Cómo correr una cotización
 
-**Requisitos:** un navegador y una API key de Anthropic (`console.anthropic.com`). Sin
-instalación ni dependencias: el frontend es un único HTML estático.
+**Requisitos:** un navegador y una API key de alguno de los dos proveedores soportados:
+**Google Gemini** (gratis, con free tier: `aistudio.google.com` → "Get API key") o
+**Anthropic** (`console.anthropic.com`, requiere crédito). Sin instalación ni dependencias:
+el frontend es un único HTML estático.
 
 1. Abrir el frontend servido desde el repo — GitHub Pages
    (`https://mateogp997.github.io/eventos-redline/`) o local:
    `python -m http.server` en la raíz del repo y entrar a `http://localhost:8000`.
    (Desde `file://` el navegador bloquea la lectura del contrato: usar una de las dos vías.)
-2. Pegar la API key (queda solo en el navegador del operador, en `localStorage`; **nunca**
-   se versiona ni viaja a otro lado que la API de Anthropic).
-3. Elegir modelo (default: `claude-haiku-4-5`, ver Análisis económico) — temperatura fija
-   en 0 para consistencia entre corridas.
+2. Elegir proveedor y pegar la API key (queda solo en el navegador del operador, en
+   `localStorage`; **nunca** se versiona ni viaja a otro lado que la API del proveedor).
+3. Elegir modelo (default: `gemini-2.5-flash` en free tier; ver Análisis económico) —
+   temperatura fija en 0 para consistencia entre corridas.
 4. Pegar el hilo con voces marcadas y cotizar.
 5. Revisar checks, alertas y total; **Descargar registro de corrida (.md)** y guardarlo en
    `corridas/` para dejar la ejecución versionada.
@@ -88,11 +90,13 @@ Nivel de delegación: **L2 — ejecutar con revisión.**
 
 ## Análisis económico
 
-**Tarifas de API** (página de precios de Anthropic, consultada el 6/9/2026, USD por millón
-de tokens): `claude-haiku-4-5` entrada 1,00 / salida 5,00 · `claude-sonnet-4-5` 3,00 /
-15,00 · `claude-fable-5` 5,00 / 25,00. El frontend calcula y muestra el costo exacto de
-cada corrida con estas tarifas; los consumos reales por corrida quedan en cada registro de
-[corridas/](corridas/) (campo Tokens).
+**Tarifas de API** (páginas de precios de Anthropic y de Google, consultadas el 6/9/2026,
+USD por millón de tokens): `gemini-2.5-flash` entrada 0,30 / salida 2,50 y
+`gemini-2.5-pro` 1,25 / 10,00 — ambos además con **free tier** (costo 0 dentro de los
+límites de cuota) · `claude-haiku-4-5` 1,00 / 5,00 · `claude-sonnet-4-5` 3,00 / 15,00 ·
+`claude-fable-5` 5,00 / 25,00. El frontend calcula y muestra el costo exacto de cada
+corrida con estas tarifas (y aclara cuando la corrida salió del free tier); los consumos
+reales por corrida quedan en cada registro de [corridas/](corridas/) (campo Tokens).
 
 - **Composición de una corrida:** entrada = contrato v4 + precios.json + hilo
   (~8–10k tokens según el hilo); salida = el JSON (~1–1,5k tokens).

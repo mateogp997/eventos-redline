@@ -63,6 +63,7 @@
   .metricas{font-family:var(--mono);font-size:12.5px;color:var(--ink3);margin-top:10px;line-height:1.8}
   .acciones{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
   .aviso{font-size:12px;color:var(--ink3);margin-top:8px}
+  .aviso a{color:var(--red2)}
 </style>
 </head>
 <body>
@@ -74,26 +75,27 @@
   <div class="grid">
     <div class="card">
       <h2>Configuración</h2>
-      <label>API key de Anthropic (queda solo en este navegador)</label>
-      <input type="password" id="apikey" placeholder="sk-ant-...">
       <div class="row">
         <div>
-          <label>Modelo</label>
-          <select id="modelo">
-            <option value="claude-haiku-4-5">claude-haiku-4-5 (liviano, default)</option>
-            <option value="claude-sonnet-4-5">claude-sonnet-4-5</option>
-            <option value="claude-fable-5">claude-fable-5 (frontier)</option>
-            <option value="__custom__">otro…</option>
+          <label>Proveedor</label>
+          <select id="proveedor">
+            <option value="gemini">Google Gemini (free tier)</option>
+            <option value="anthropic">Anthropic (Claude)</option>
           </select>
         </div>
         <div>
-          <label>Fecha de hoy</label>
-          <input type="date" id="fecha">
+          <label>Modelo</label>
+          <select id="modelo"></select>
         </div>
       </div>
       <input type="text" id="modeloCustom" placeholder="id exacto del modelo" style="display:none;margin-top:8px">
-      <p class="aviso">Temperatura fija en 0 (consistencia entre corridas). Cada corrida registra modelo,
-      tokens y versión de precios.</p>
+      <label id="lblKey">API key</label>
+      <input type="password" id="apikey" placeholder="pegá tu clave">
+      <p class="aviso" id="avisoKey"></p>
+      <label>Fecha de hoy</label>
+      <input type="date" id="fecha">
+      <p class="aviso">La clave queda solo en este navegador. Temperatura fija en 0 (consistencia entre
+      corridas). Cada corrida registra proveedor, modelo, tokens y versión de precios.</p>
     </div>
 
     <div class="card">
@@ -135,22 +137,54 @@
 "use strict";
 /* Cotizador Redline — frontend del trabajo final. Sin dependencias.
    Lee prompts/system_prompt.md y datos/precios.json del mismo origen (GitHub Pages o
-   servidor local); llama a la API de Anthropic directo desde el navegador. */
+   servidor local); llama a la API del proveedor elegido directo desde el navegador. */
 
 const $ = id => document.getElementById(id);
 const fmt = n => "$" + Number(n||0).toLocaleString("es-AR");
 
-/* Precios de API por millón de tokens, USD — página de precios de Anthropic, consultada 6/9/2026 */
-const PRECIOS_API = {
-  "claude-haiku-4-5": { in: 1.00, out: 5.00 },
-  "claude-sonnet-4-5": { in: 3.00, out: 15.00 },
-  "claude-fable-5": { in: 5.00, out: 25.00 }
+/* Modelos por proveedor y tarifas por millón de tokens, USD.
+   Fuentes: páginas de precios de Anthropic y de Google (Gemini API), consultadas 6/9/2026.
+   freeTier: la API de Gemini tiene un nivel gratuito con límites de cuota (costo 0). */
+const PROVEEDORES = {
+  gemini: {
+    etiqueta: "Google Gemini",
+    modelos: ["gemini-2.5-flash", "gemini-2.5-pro"],
+    tarifas: {
+      "gemini-2.5-flash": { in: 0.30, out: 2.50, freeTier: true },
+      "gemini-2.5-pro":   { in: 1.25, out: 10.00, freeTier: true }
+    },
+    keyHint: 'Clave gratis en <a href="https://aistudio.google.com" target="_blank" rel="noopener">aistudio.google.com</a> → "Get API key". El free tier alcanza de sobra para este volumen.',
+    placeholder: "AIza..."
+  },
+  anthropic: {
+    etiqueta: "Anthropic",
+    modelos: ["claude-haiku-4-5", "claude-sonnet-4-5", "claude-fable-5"],
+    tarifas: {
+      "claude-haiku-4-5":  { in: 1.00, out: 5.00 },
+      "claude-sonnet-4-5": { in: 3.00, out: 15.00 },
+      "claude-fable-5":    { in: 5.00, out: 25.00 }
+    },
+    keyHint: 'Clave en <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a> (requiere crédito).',
+    placeholder: "sk-ant-..."
+  }
 };
-const PRECIOS_API_FECHA = "2026-09-06";
+const TARIFAS_FECHA = "2026-09-06";
 
 let SYSTEM_MD = null, PRECIOS_JSON = null, ultima = null;
 
 function hoyISO(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function provActual(){ return PROVEEDORES[$("proveedor").value]; }
+
+function poblarModelos(){
+  const p = provActual();
+  $("modelo").innerHTML = p.modelos.map((m,i)=>'<option value="'+m+'"'+(i===0?' selected':'')+'>'+m+(i===0?' (default)':'')+'</option>').join("") +
+    '<option value="__custom__">otro…</option>';
+  $("modeloCustom").style.display = "none";
+  $("lblKey").textContent = "API key de " + p.etiqueta;
+  $("avisoKey").innerHTML = p.keyHint;
+  $("apikey").placeholder = p.placeholder;
+  try{ $("apikey").value = localStorage.getItem("rl_apikey_"+$("proveedor").value) || ""; }catch(e){}
+}
 
 async function cargarBase(){
   try{
@@ -191,6 +225,50 @@ function parsearSalida(texto){
   const m = t.match(/```(?:json)?\s*([\s\S]*?)```/);
   if(m) t = m[1].trim();
   return JSON.parse(t);
+}
+
+async function llamarAnthropic(key, modelo, system, user){
+  const resp = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": key,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify({ model: modelo, max_tokens: 3000, temperature: 0,
+      system: system, messages: [{ role: "user", content: user }] })
+  });
+  const data = await resp.json();
+  if(!resp.ok) throw new Error(data.error?.message || ("HTTP "+resp.status));
+  return {
+    texto: (data.content||[]).map(c=>c.text||"").join(""),
+    in: data.usage?.input_tokens ?? 0,
+    out: data.usage?.output_tokens ?? 0
+  };
+}
+
+async function llamarGemini(key, modelo, system, user){
+  const url = "https://generativelanguage.googleapis.com/v1beta/models/" +
+    encodeURIComponent(modelo) + ":generateContent?key=" + encodeURIComponent(key);
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: system }] },
+      contents: [{ role: "user", parts: [{ text: user }] }],
+      generationConfig: { temperature: 0, maxOutputTokens: 3000 }
+    })
+  });
+  const data = await resp.json();
+  if(!resp.ok) throw new Error(data.error?.message || ("HTTP "+resp.status));
+  const texto = (data.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("");
+  if(!texto) throw new Error("Gemini no devolvió texto (finishReason: " + (data.candidates?.[0]?.finishReason||"?") + ")");
+  return {
+    texto,
+    in: data.usageMetadata?.promptTokenCount ?? 0,
+    out: data.usageMetadata?.candidatesTokenCount ?? 0
+  };
 }
 
 function verificar(j){
@@ -265,42 +343,39 @@ function render(j, meta){
   const checks = verificar(j);
   $("rChecks").innerHTML = checks.map(c=>"<li class='"+(c.ok?"ok":"fail")+"'>"+(c.ok?"✓ ":"✗ ")+c.nombre+"</li>").join("");
   ultima.checks = checks;
-  $("rMetricas").innerHTML = "modelo: "+meta.modelo+" · temperatura: 0 · tokens entrada: "+meta.in+
-    " · salida: "+meta.out+" · costo: USD "+meta.costo+" (tarifas del "+PRECIOS_API_FECHA+")"+
+  $("rMetricas").innerHTML = "proveedor: "+meta.proveedor+" · modelo: "+meta.modelo+" · temperatura: 0 · tokens entrada: "+meta.in+
+    " · salida: "+meta.out+" · costo: "+meta.costoTexto+" (tarifas del "+TARIFAS_FECHA+")"+
     " · precios_version: "+(j.precios_version||"?")+" · "+meta.fechaISO;
   $("rJson").textContent = JSON.stringify(j, null, 2);
 }
 
 async function cotizar(){
   const key = $("apikey").value.trim();
+  const prov = $("proveedor").value;
   const modelo = modeloElegido();
   if(!key) return setStatus("Falta la API key.", true);
   if(!modelo) return setStatus("Falta el modelo.", true);
   if(!$("hilo").value.trim()) return setStatus("Pegá el hilo de WhatsApp.", true);
-  try{ localStorage.setItem("rl_apikey", key); localStorage.setItem("rl_modelo", $("modelo").value); }catch(e){}
+  try{
+    localStorage.setItem("rl_apikey_"+prov, key);
+    localStorage.setItem("rl_proveedor", prov);
+  }catch(e){}
   const system = SYSTEM_MD + "\n\n## PRECIOS VIGENTES (contenido de datos/precios.json)\n```json\n" + PRECIOS_JSON + "\n```\n";
   const user = armarUserPrompt();
   $("btnCotizar").disabled = true; setStatus("Cotizando…");
   try{
-    const resp = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": key,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
-      },
-      body: JSON.stringify({ model: modelo, max_tokens: 3000, temperature: 0,
-        system: system, messages: [{ role: "user", content: user }] })
-    });
-    const data = await resp.json();
-    if(!resp.ok) throw new Error(data.error?.message || ("HTTP "+resp.status));
-    const texto = (data.content||[]).map(c=>c.text||"").join("");
-    const j = parsearSalida(texto);
-    const p = PRECIOS_API[modelo];
-    const costo = p ? ((data.usage.input_tokens/1e6)*p.in + (data.usage.output_tokens/1e6)*p.out).toFixed(4) : "sin tarifa cargada";
-    render(j, { modelo, in: data.usage.input_tokens, out: data.usage.output_tokens, costo,
-      fechaISO: new Date().toISOString().slice(0,19), user, crudo: texto });
+    const r = prov === "gemini"
+      ? await llamarGemini(key, modelo, system, user)
+      : await llamarAnthropic(key, modelo, system, user);
+    const j = parsearSalida(r.texto);
+    const t = provActual().tarifas[modelo];
+    let costoTexto = "sin tarifa cargada";
+    if(t){
+      const costo = ((r.in/1e6)*t.in + (r.out/1e6)*t.out).toFixed(4);
+      costoTexto = t.freeTier ? "USD 0 en free tier (equivalente pago: USD "+costo+")" : "USD "+costo;
+    }
+    render(j, { proveedor: prov, modelo, in: r.in, out: r.out, costoTexto,
+      fechaISO: new Date().toISOString().slice(0,19), user, crudo: r.texto });
     setStatus("Listo. Revisá el presupuesto antes de responderle al cliente.");
   }catch(e){
     setStatus("Error: " + e.message, true);
@@ -315,11 +390,11 @@ function descargarRegistro(){
   const id = "corrida_v4_" + meta.fechaISO.replace(/[-:T]/g,"").slice(0,14);
   const md = "# Registro de corrida — " + id + "\n\n" +
     "- **Fecha de ejecución:** " + meta.fechaISO + " (hora local)\n" +
-    "- **Herramienta:** frontend `index.html` del repo → API de Anthropic (fetch directo)\n" +
+    "- **Herramienta:** frontend `index.html` del repo → API de " + meta.proveedor + " (fetch directo)\n" +
     "- **Modelo:** `" + meta.modelo + "` · temperatura: 0 · max_tokens: 3000\n" +
     "- **Contrato:** `prompts/system_prompt.md` (v4) + `datos/precios.json` versión `" + (j.precios_version||"?") + "`\n" +
-    "- **Tokens:** entrada " + meta.in + " · salida " + meta.out + " → costo USD " + meta.costo +
-    " (tarifas Anthropic del " + PRECIOS_API_FECHA + ")\n" +
+    "- **Tokens:** entrada " + meta.in + " · salida " + meta.out + " → costo " + meta.costoTexto +
+    " (tarifas del " + TARIFAS_FECHA + ")\n" +
     "- **Estado:** " + j.estado + " · modo: " + j.modo_cotizacion + " · total: " + fmt(j.total) + " · seña: " + fmt(j.sena_50) + "\n\n" +
     "## Entrada (user prompt completo)\n\n```\n" + meta.user + "\n```\n\n" +
     "## Salida cruda del agente\n\n```json\n" + JSON.stringify(j, null, 2) + "\n```\n\n" +
@@ -335,12 +410,11 @@ function descargarRegistro(){
 $("btnCotizar").addEventListener("click", cotizar);
 $("btnRegistro").addEventListener("click", descargarRegistro);
 $("btnJson").addEventListener("click", ()=>{ if(ultima) navigator.clipboard.writeText(JSON.stringify(ultima.json,null,2)); });
+$("proveedor").addEventListener("change", poblarModelos);
 $("modelo").addEventListener("change", ()=>{ $("modeloCustom").style.display = $("modelo").value==="__custom__" ? "block" : "none"; });
 $("fecha").value = hoyISO();
-try{
-  const k = localStorage.getItem("rl_apikey"); if(k) $("apikey").value = k;
-  const m = localStorage.getItem("rl_modelo"); if(m) $("modelo").value = m;
-}catch(e){}
+try{ const p = localStorage.getItem("rl_proveedor"); if(p && PROVEEDORES[p]) $("proveedor").value = p; }catch(e){}
+poblarModelos();
 cargarBase();
 </script>
 </body>
