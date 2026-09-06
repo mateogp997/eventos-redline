@@ -1,0 +1,125 @@
+{
+  "version": "2026-09-06.1",
+  "vigencia_desde": "2026-09-06",
+  "moneda": "ARS",
+  "notas": "Fuente unica de precios del cotizador. El contrato (prompts/system_prompt.md) prohibe usar cualquier precio que no salga de este archivo. Editar este archivo NO requiere tocar el contrato; subir la version con cada cambio.",
+  "capacidad": {
+    "simuladores": 8,
+    "horario": "14:00-03:30",
+    "bloque_minimo_min": 30
+  },
+  "paquetes": {
+    "merienda": {
+      "descripcion": "1 h simulador + 30 min merienda + 30 min simulador. Merienda: infusion o bebida sin alcohol + budin / waffle / tostado J&Q / muffin / medialunas. Incluye tarjeta rookie con $20.000 de carga para el cumpleanero.",
+      "precio_por_persona": { "semana": 51000, "finde": 58000 },
+      "personas_sugeridas": "6 a 8"
+    },
+    "cena": {
+      "descripcion": "1 h simulador + 30 min cena + 30 min simulador. Cena: hamburguesa simple a eleccion + bebida sin alcohol + 2 papas con cheddar para la mesa.",
+      "precio_por_persona": { "semana": 55000, "finde": 63000 },
+      "personas_sugeridas": "6 a 8"
+    },
+    "pro_bday": {
+      "descripcion": "2 h en total, grupo dividido en dos equipos que rotan en los simuladores (para grupos de mas de 8). Merienda simple a eleccion: tostado J&Q, chipa, medialunas, wrap, budin, cafe o te. Espacio para torta.",
+      "precio_por_persona": { "semana": 35000, "finde": 40000 },
+      "personas_max": 16
+    }
+  },
+  "extras_paquete": {
+    "torta_tematica_10_porciones": 70000,
+    "cambio_de_cronograma": null,
+    "cierre_exclusivo_del_local": null,
+    "nota_null": "null = sin precio definido por el negocio: el contrato lo deja en faltantes, nunca lo inventa"
+  },
+  "simuladores": {
+    "unidad": "por simulador, por sesion",
+    "sesiones": { "30": 19000, "60": 29000, "120": 49000 },
+    "regla_combinacion": "duraciones intermedias se arman combinando sesiones (90 = 60+30; 180 = 120+60); no existe fraccion menor a 30 min"
+  },
+  "carta": {
+    "hamburguesas": {
+      "nota": "todas vienen solas; las papas se agregan aparte",
+      "Colapinto": { "simple": 15000, "doble": 17500 },
+      "Fangio": { "simple": 14000, "doble": 16500 },
+      "Kimi": { "simple": 14000, "doble": 16500 },
+      "Norris": { "simple": 13000, "doble": 15500 },
+      "Senna": { "simple": 16000, "doble": 18500 },
+      "Verstappen": { "simple": 15000, "doble": 17500 }
+    },
+    "acompanamientos": {
+      "Papas Clasicas": 8500,
+      "Papas RLR": 9500,
+      "Nuggets x10": 10500,
+      "Muzzarelitas x10": 11000
+    },
+    "extras": {
+      "Cheddar": 1200,
+      "Medallon extra": 3500,
+      "Salsa picante": 800
+    },
+    "merienda_cafeteria": {
+      "Box Cafe (Cafe + Tost)": 11900,
+      "Sweet Lap (Infusion + Budin o Muffin)": 12900,
+      "Cafe con leche": 4500,
+      "Cortado": 3500,
+      "Espresso": 3500,
+      "Lagrima": 4500,
+      "Te": 3500,
+      "Jugo de naranja": 1500,
+      "Medialunas x2": 3500,
+      "Tostado J&Q": 5000,
+      "Tostado lomito y cheddar": 5500,
+      "Budines": 4500,
+      "Muffins": 5200,
+      "Brownie": 4500,
+      "Waffle con DDL": 5900
+    },
+    "combos": {
+      "Box Crew (2 Norris simple + 2 gaseosas)": 24900,
+      "Pit Stop (2 cervezas + papas RLR)": 17900,
+      "Pole Position (2 fernet + papas RLR)": 14900
+    },
+    "bebidas_sin_alcohol": {
+      "Agua": 3500,
+      "Agua con Gas": 3500,
+      "Gaseosa": 4500,
+      "Red Bull": 6500,
+      "nota_gaseosa": "Gaseosa es el item generico para eventos; cubre Coca Cola, Coca Cola Zero, Sprite, Sprite Zero, Fanta, Schweppes Pomelo y Schweppes Tonica"
+    },
+    "cervezas": {
+      "Cerveza Patagonia": 7500,
+      "Pinta tirada 600ml": 7000
+    },
+    "tragos": {
+      "Fernet con Coca": 9500,
+      "Cuba Libre": 9500,
+      "Gin Tonic Aconcagua": 10500,
+      "Gin Tonic Malaria": 12500,
+      "Gin Tonic Bombay": 13500,
+      "Campari Orange": 8500,
+      "Gancia con Sprite": 8500,
+      "Vodka con naranja": 8000,
+      "Vodka Red Bull": 13000,
+      "Whisky Cola": 11500,
+      "Whisky on the rocks": 7000,
+      "Jack Daniels": 9000,
+      "Jagger con Red Bull": 14500,
+      "Baileys": 6000
+    },
+    "shots": {
+      "Shot Jagger": 6000,
+      "Shot Tequila": 5000,
+      "Shot Vodka": 5000
+    },
+    "postres": {
+      "Franui": 9500
+    }
+  },
+  "condiciones": {
+    "minimo_personas_evento": 6,
+    "descuento_evento_carta": { "finde": 10, "semana": 30 },
+    "nota_descuento": "el descuento aplica solo a cotizacion por carta, nunca sobre paquetes ni precios acordados",
+    "sena_pct": 50,
+    "sena_medio": "Mercado Pago"
+  }
+}
