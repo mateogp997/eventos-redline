@@ -365,9 +365,23 @@ async function cotizar(){
   const user = armarUserPrompt();
   $("btnCotizar").disabled = true; setStatus("Cotizando…");
   try{
-    const r = prov === "gemini"
-      ? await llamarGemini(key, modelo, system, user)
-      : await llamarAnthropic(key, modelo, system, user);
+    let r, intento = 0;
+    while(true){
+      try{
+        r = prov === "gemini"
+          ? await llamarGemini(key, modelo, system, user)
+          : await llamarAnthropic(key, modelo, system, user);
+        break;
+      }catch(e){
+        intento++;
+        const transitorio = /high demand|overloaded|try again|temporar|429|503|resource.*exhaust|rate limit/i.test(e.message||"");
+        if(!transitorio || intento > 3) throw e;
+        const espera = 6 * intento;
+        setStatus("El modelo está saturado (pico de demanda). Reintento " + intento + "/3 en " + espera + " segundos…");
+        await new Promise(res => setTimeout(res, espera * 1000));
+        setStatus("Cotizando… (reintento " + intento + "/3)");
+      }
+    }
     const j = parsearSalida(r.texto);
     const t = provActual().tarifas[modelo];
     let costoTexto = "sin tarifa cargada";
