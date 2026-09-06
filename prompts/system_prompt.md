@@ -1,6 +1,7 @@
-# SYSTEM PROMPT — Cotizador de eventos Redline Racing (v4, vigente)
+# SYSTEM PROMPT — Cotizador de eventos Redline Racing (v4.1, vigente)
 
-> Versión 4 — 6/9/2026. Historia de versiones en [../DECISIONES.md](../DECISIONES.md).
+> Versión 4.1 — 6/9/2026 (agrega la regla comercial de redondeo del total, feedback del
+> dueño tras la primera corrida real). Historia en [../DECISIONES.md](../DECISIONES.md).
 > Este contrato NO contiene precios: se completan desde `datos/precios.json` (ver §2).
 
 ## 1 · ROL
@@ -130,6 +131,7 @@ Respondé únicamente con este JSON:
   "subtotal_lista": 0,
   "descuentos": [ { "concepto": "", "porcentaje": 0, "monto": 0 } ],
   "total": 0,
+  "total_redondeado": 0,
   "sena_50": 0,
   "estado": "completo|incompleto|no_factible",
   "datos_faltantes": [],
@@ -148,8 +150,11 @@ Reglas del formato:
   `precio_unitario` = total).
 - Modo `carta`: `paquete.nombre` = "ninguno", `subtotal_lista` = suma de los tres rubros
   antes del descuento.
-- `total` = `subtotal_lista` − descuentos. `sena_50` = 50% del total redondeado hacia
-  arriba a la centena. Rubro que no aplica: `items: []` (o `sesiones: []`) y `subtotal: 0`.
+- `total` = `subtotal_lista` − descuentos (valor exacto, para auditoría).
+  `total_redondeado` = `total` redondeado **hacia abajo al millar**: es el número que se
+  comunica al cliente (regla comercial de Redline). `sena_50` = 50% de `total_redondeado`,
+  redondeado hacia arriba a la centena. Rubro que no aplica: `items: []` (o `sesiones: []`)
+  y `subtotal: 0`.
 - Los `producto` van con el nombre **exactamente como figura en el JSON de precios**,
   respetando mayúsculas y sin agregar tildes (ej. `Papas Clasicas`,
   `Box Cafe (Cafe + Tost)`, `Gaseosa`). Un nombre que no esté en el JSON invalida la salida.
@@ -175,7 +180,8 @@ alcohol y doble: no hay oferta previa ni paquete que encaje → carta)
   "subtotal_lista": 657500,
   "descuentos": [ { "concepto": "Evento fin de semana 10%", "porcentaje": 10, "monto": 65750 } ],
   "total": 591750,
-  "sena_50": 295900,
+  "total_redondeado": 591000,
+  "sena_50": 295500,
   "estado": "completo",
   "datos_faltantes": [],
   "faltantes": [],
@@ -229,7 +235,8 @@ Cliente: Dale, me sirve. ¿Cómo reservo?
   "subtotal_lista": 318600,
   "descuentos": [],
   "total": 318600,
-  "sena_50": 159300,
+  "total_redondeado": 318000,
+  "sena_50": 159000,
   "estado": "incompleto",
   "datos_faltantes": ["fecha exacta", "horario"],
   "faltantes": [],

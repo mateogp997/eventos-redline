@@ -87,6 +87,29 @@ la motivaron — todas conservadas en `corridas/`.
   acordado $318.600 (6 × $53.100, lo prometido al cliente); Selene debe cotizar como
   principal la variante aprobada.
 
+## Iteración 3b (6/9, noche) — lo que enseñó la primera corrida real
+
+- **Fallas de proveedor en cadena, en el primer intento de uso real:** (1) el modelo default
+  quedó deprecado para cuentas nuevas (`gemini-2.5-flash` → la API exige 3.6); (2) el free
+  tier del modelo nuevo devolvió 503 por pico de demanda; (3) la respuesta llegó envuelta en
+  fence de markdown y truncada — los Gemini 3.x gastan tokens de razonamiento dentro del
+  límite de salida. **Mitigaciones** (una por falla, commits del 6/9): migración de modelo
+  con tarifa actualizada y citada; reintento automático 3× con espera creciente ante errores
+  transitorios; `responseMimeType: application/json` + límite 8192 + parser tolerante a
+  fences y truncamientos. Lección para gobierno: la dependencia del proveedor es un riesgo
+  operativo real — apareció tres veces en una noche — y las tres mitigaciones quedaron en el
+  sistema, no en la memoria de quien las sufrió.
+- **Feedback del dueño sobre la primera salida** (primera revisión humana del circuito L2):
+  cantidades mostradas con signo pesos y tablas confusas → corregido en el frontend (columnas
+  explícitas, subtotales por rubro, cuadro resumen). Y una regla comercial que no estaba
+  escrita en ningún lado: **el total se comunica al cliente redondeado a miles hacia abajo**
+  → contrato v4 → v4.1: campo `total_redondeado` + seña calculada sobre él. Es el mismo
+  patrón de la iteración 2: la regla existía en la práctica comercial; el sistema la hizo
+  visible al no aplicarla.
+- **Verificación:** las corridas oficiales v4.1 (Guido, Selene, Alejandro, caso límite,
+  reproducción y comparación de modelos) se registran en `corridas/` con los checks del
+  frontend — que ahora exigen `total_redondeado` — en verde.
+
 ## Alcance, supuestos y pendientes
 
 **Decisiones de alcance (con motivo):**

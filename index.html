@@ -112,7 +112,7 @@
 
   <div id="resultado">
     <div class="totales">
-      <div class="tot"><div class="k">Total</div><div class="v" id="rTotal">—</div></div>
+      <div class="tot"><div class="k">Total a comunicar</div><div class="v" id="rTotal">—</div></div>
       <div class="tot"><div class="k">Seña 50%</div><div class="v" id="rSena">—</div></div>
       <div class="tot"><div class="k">Estado</div><div class="v small" id="rEstado">—</div></div>
       <div class="tot"><div class="k">Modo</div><div class="v small" id="rModo">—</div></div>
@@ -196,7 +196,7 @@ async function cargarBase(){
     SYSTEM_MD = sp; PRECIOS_JSON = pr;
     let v = "?";
     try{ v = JSON.parse(pr).version; }catch(e){}
-    $("tagVersiones").textContent = "contrato v4 · precios " + v;
+    $("tagVersiones").textContent = "contrato v4.1 · precios " + v;
   }catch(e){
     $("tagVersiones").textContent = "error de carga";
     setStatus("No pude leer prompts/system_prompt.md o datos/precios.json. Abrí la página desde GitHub Pages " +
@@ -297,7 +297,10 @@ function verificar(j){
     }
     const desc = (j.descuentos||[]).reduce((a,d)=>a+(d.monto||0),0);
     add("total = subtotal_lista − descuentos", j.total === j.subtotal_lista - desc);
-    add("Seña = 50% redondeada ↑ a la centena", j.sena_50 === Math.ceil(j.total/2/100)*100);
+    add("total_redondeado = total bajado al millar",
+      typeof j.total_redondeado === "number" && j.total_redondeado === Math.floor(j.total/1000)*1000);
+    const base = (typeof j.total_redondeado === "number") ? j.total_redondeado : j.total;
+    add("Seña = 50% del total redondeado", j.sena_50 === Math.ceil(base/2/100)*100);
     add("Máximo 4 alertas", (j.alertas||[]).length <= 4);
     add("precios_version coincide con datos/precios.json",
       (()=>{ try{ return j.precios_version === JSON.parse(PRECIOS_JSON).version; }catch(e){ return false; } })());
@@ -308,35 +311,44 @@ function verificar(j){
 function render(j, meta){
   ultima = { json: j, meta };
   $("resultado").style.display = "block";
-  $("rTotal").textContent = fmt(j.total);
+  const rd = (typeof j.total_redondeado === "number") ? j.total_redondeado : j.total;
+  $("rTotal").textContent = fmt(rd);
   $("rSena").textContent = fmt(j.sena_50);
   $("rEstado").textContent = j.estado; $("rEstado").className = "v small estado-"+j.estado;
   $("rModo").textContent = j.modo_cotizacion + (j.paquete?.nombre && j.paquete.nombre!=="ninguno" ? " · "+j.paquete.nombre : "");
+  const money = n => "<td class='num'>"+fmt(n)+"</td>";
+  const cant = n => "<td class='num'>"+Number(n||0).toLocaleString("es-AR")+"</td>";
+  const subFila = (texto, monto) =>
+    "<tr><td colspan='3' style='text-align:right;color:var(--ink3)'>"+texto+"</td>"+money(monto)+"</tr>";
   let html = "";
-  const filaTabla = (arr, cols) => arr.map(x=>"<tr>"+cols.map(c=>{
-    const v = x[c]; const num = typeof v==="number";
-    return "<td"+(num?' class="num"':'')+">"+(num?fmt(v):(v??""))+"</td>";
-  }).join("")+"</tr>").join("");
   if(j.modo_cotizacion!=="carta" && j.paquete && j.paquete.subtotal){
-    html += "<table><tr><th>Paquete</th><th>Personas</th><th>Precio unitario</th><th>Subtotal</th></tr>"+
-      "<tr><td>"+j.paquete.nombre+"</td><td class='num'>"+j.paquete.personas+"</td><td class='num'>"+
-      fmt(j.paquete.precio_unitario)+"</td><td class='num'>"+fmt(j.paquete.subtotal)+"</td></tr></table>";
+    html += "<table><tr><th>Paquete</th><th>Personas</th><th>Precio por persona</th><th>Subtotal</th></tr>"+
+      "<tr><td>"+j.paquete.nombre+"</td>"+cant(j.paquete.personas)+money(j.paquete.precio_unitario)+money(j.paquete.subtotal)+"</tr></table>";
   }
   if(j.simuladores?.sesiones?.length){
-    html += "<table><tr><th>Simuladores ("+j.simuladores.modalidad+")</th><th>Cantidad</th><th>Unitario</th><th>Subtotal</th></tr>"+
-      filaTabla(j.simuladores.sesiones.map(s=>({producto:s.duracion_min+" min",cantidad:s.cantidad,precio_unitario:s.precio_unitario,subtotal:s.subtotal})),
-        ["producto","cantidad","precio_unitario","subtotal"])+"</table>";
+    html += "<table><tr><th>Simuladores ("+(j.simuladores.modalidad||"")+")</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th></tr>"+
+      j.simuladores.sesiones.map(s=>"<tr><td>Sesión de "+s.duracion_min+" min</td>"+cant(s.cantidad)+money(s.precio_unitario)+money(s.subtotal)+"</tr>").join("")+
+      subFila("Subtotal simuladores", j.simuladores.subtotal)+"</table>";
   }
   for(const [rubro,titulo] of [["comida","Comida"],["bebida","Bebida"]]){
-    if(j[rubro]?.items?.length){
-      html += "<table><tr><th>"+titulo+"</th><th>Cantidad</th><th>Unitario</th><th>Subtotal</th></tr>"+
-        filaTabla(j[rubro].items, ["producto","cantidad","precio_unitario","subtotal"])+"</table>";
+    const b = j[rubro];
+    if(b?.items?.length){
+      html += "<table><tr><th>"+titulo+"</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th></tr>"+
+        b.items.map(x=>"<tr><td>"+(x.producto||"")+"</td>"+cant(x.cantidad)+money(x.precio_unitario)+money(x.subtotal)+"</tr>").join("")+
+        subFila("Subtotal "+titulo.toLowerCase(), b.subtotal)+"</table>";
     }
   }
-  if(j.descuentos?.length){
-    html += "<table><tr><th>Descuento</th><th></th><th>%</th><th>Monto</th></tr>"+
-      filaTabla(j.descuentos.map(d=>({producto:d.concepto,cantidad:"",precio_unitario:d.porcentaje,subtotal:d.monto})),
-        ["producto","cantidad","precio_unitario","subtotal"])+"</table>";
+  if(j.subtotal_lista || j.total){
+    let resumen = "<table><tr><th colspan='2'>Resumen</th></tr>" +
+      "<tr><td>Subtotal a precio de lista</td>"+money(j.subtotal_lista)+"</tr>";
+    (j.descuentos||[]).forEach(d=>{
+      resumen += "<tr><td>"+d.concepto+"</td><td class='num'>− "+fmt(d.monto)+"</td></tr>";
+    });
+    if(rd !== j.total) resumen += "<tr><td>Total exacto</td>"+money(j.total)+"</tr>";
+    resumen += "<tr><td><b>Total a comunicar al cliente"+(rd!==j.total?" (redondeado a miles)":"")+"</b></td>"+
+      "<td class='num'><b>"+fmt(rd)+"</b></td></tr>" +
+      "<tr><td>Seña 50% (Mercado Pago)</td>"+money(j.sena_50)+"</tr></table>";
+    html += resumen;
   }
   $("rDesglose").innerHTML = html || "<p class='aviso'>Sin desglose (cotización incompleta).</p>";
   let listas = "";
@@ -415,7 +427,8 @@ function descargarRegistro(){
     "- **Contrato:** `prompts/system_prompt.md` (v4) + `datos/precios.json` versión `" + (j.precios_version||"?") + "`\n" +
     "- **Tokens:** entrada " + meta.in + " · salida " + meta.out + " → costo " + meta.costoTexto +
     " (tarifas del " + TARIFAS_FECHA + ")\n" +
-    "- **Estado:** " + j.estado + " · modo: " + j.modo_cotizacion + " · total: " + fmt(j.total) + " · seña: " + fmt(j.sena_50) + "\n\n" +
+    "- **Estado:** " + j.estado + " · modo: " + j.modo_cotizacion + " · total exacto: " + fmt(j.total) +
+    " · total comunicado: " + fmt((typeof j.total_redondeado==="number")?j.total_redondeado:j.total) + " · seña: " + fmt(j.sena_50) + "\n\n" +
     "## Entrada (user prompt completo)\n\n```\n" + meta.user + "\n```\n\n" +
     "## Salida cruda del agente\n\n```json\n" + JSON.stringify(j, null, 2) + "\n```\n\n" +
     "## Verificación automática del frontend\n\n" +
