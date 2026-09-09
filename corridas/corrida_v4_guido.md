@@ -74,8 +74,9 @@ Devolvé solo el JSON.
   cronograma pedido (1h + merienda + 1h) tiene 30 min más de simulador que el paquete
   Merienda y la regla de precedencia v4.1 exige que el pedido "encaje" para ir a paquete.
   La v3 lo cotizaba como paquete ($58.000 × 8 = $464.000) con el extra en `faltantes`.
-  Ambas lecturas son defendibles; queda planteado el ajuste de contrato "paquete +
-  agregados menores" — decisión comercial pendiente del dueño (ver DECISIONES).
+  **Resuelto el 8/9:** el dueño confirmó la lectura estricta (todo lo que no encaja
+  exactamente en un paquete va a carta) — esta corrida queda validada como correcta
+  (ver DECISIONES, "Decisión comercial 8/9").
 - [x] Además se generó la propuesta en PDF ("Propuesta Redline - Cumple de Guido.pdf")
   con esta cotización — primera corrida de punta a punta: hilo → JSON → PDF de marca.
 - [ ] Respuesta enviada al cliente por: (caso histórico, no se envía)

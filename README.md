@@ -101,16 +101,17 @@ introductorio hasta el 31/12/2026; desde 2027: 1,50 / 7,50) — además con **fr
 corrida con estas tarifas (y aclara cuando la corrida salió del free tier); los consumos
 reales por corrida quedan en cada registro de [corridas/](corridas/) (campo Tokens).
 
-- **Composición de una corrida:** entrada = contrato v4 + precios.json + hilo
-  (~8–10k tokens según el hilo); salida = el JSON (~1–1,5k tokens).
+- **Composición de una corrida (medida sobre las corridas reales):** entrada = contrato +
+  precios.json + hilo ≈ **6.300–6.700 tokens**; salida = el JSON ≈ **400–700 tokens**
+  (valores exactos en cada registro de `corridas/`).
 - **Fórmula:** costo = tokens_entrada/10⁶ × tarifa_in + tokens_salida/10⁶ × tarifa_out.
-  Con el liviano, el orden de magnitud es **~USD 0,015 por cotización** (el valor exacto,
-  medido, está en cada registro).
-- **Proyección año base:** ~10 cotizaciones/semana × 52 = 520 corridas/año → **~USD 8/año**
-  con el liviano. **Sensibilidad:** si el volumen se duplica (20/semana) o los hilos son el
-  doble de largos, el techo es ~USD 16–30/año — despreciable contra el tiempo que ahorra
-  (~15 min por cotización hecha "de cabeza") y contra el costo de un solo presupuesto mal
-  pasado.
+  Con `gemini-3.6-flash`: **≈ USD 0,007 por cotización a tarifa paga — y USD 0 operando en
+  el free tier**, cuya cuota diaria supera con holgura el volumen del negocio.
+- **Proyección año base:** ~10 cotizaciones/semana × 52 = 520 corridas/año → **USD 0 en
+  free tier; ~USD 3,60/año a tarifa paga** (y ~USD 7,50/año desde 2027, cuando termina el
+  precio introductorio). **Sensibilidad:** duplicando volumen e hilos, el techo es
+  ~USD 15/año — despreciable contra las ~90 horas/año de análisis manual que reemplaza y
+  contra el costo de un solo presupuesto mal pasado.
 - **Elección de modelo (el más chico que hace bien la tarea):** el frontend permite correr
   el mismo hilo con el liviano y con un modelo mayor; la comparación sobre un caso real,
   con el mismo criterio de éxito, está registrada en `corridas/` (registro

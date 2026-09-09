@@ -110,6 +110,16 @@ la motivaron — todas conservadas en `corridas/`.
   reproducción y comparación de modelos) se registran en `corridas/` con los checks del
   frontend — que ahora exigen `total_redondeado` — en verde.
 
+## Decisión comercial (8/9) — paquete estricto: lo que no encaja va a carta
+
+La primera corrida real v4.1 (Guido) expuso una ambigüedad de negocio: el pedido era el
+paquete Merienda **más** 30 minutos de simulador, y el agente lo cotizó todo por carta
+($503.000) donde la v3 hubiera cotizado paquete + extra ($464.000 + recargo). Planteadas
+las dos opciones al dueño, **eligió la lectura estricta: si el pedido no encaja exactamente
+en un paquete, se cotiza íntegramente por carta con el descuento de evento.** El contrato
+v4.1 ya se comporta así — no hubo cambio; la corrida de Guido queda validada como correcta
+y la regla queda escrita acá como decisión de negocio, no como accidente del prompt.
+
 ## Iteración 4 (6/9) — la propuesta en PDF con el diseño del folleto
 
 - **Pedido del dueño:** que el sistema complete el folleto oficial de cumpleaños con lo
@@ -131,6 +141,33 @@ la motivaron — todas conservadas en `corridas/`.
 - **Verificación:** prototipo local aprobado por el dueño sobre el caso Guido; generación
   en navegador probada (PDF de 7 páginas, ~4 MB). Pendiente: corrida real del dueño con
   una cotización propia y envío de prueba.
+
+## Iteración 5 (8-9/9) — la batería de corridas reales: dos ambigüedades cazadas por reproducción
+
+- **Corridas oficiales v4:** Selene (paquete Pro Bday 15 × $35.000, variante aprobada como
+  principal ✓), Alejandro (modo acordado 6 × $53.100 ✓ — el test central de la iteración 3),
+  caso límite (hilo sin datos → todo en cero, nada inventado ✓). Registros en `corridas/`.
+- **Problema observado 1:** la reproducción de Guido (R1) dio $568.080 contra los $503.280
+  originales — el modelo agregó 16 Gaseosas que nadie pidió, leyendo el supuesto de bebida
+  como aplicable sin mención de bebida. **Decisión/cambio:** v4.2 — la bebida solo se cotiza
+  si el cliente la menciona; si no hay bebida en el pedido ni en la comida cotizada, va
+  aviso en alertas.
+- **Problema observado 2:** la re-corrida con v4.2 (R3) dio $438.480 — cotizó 1 h + merienda
+  + 1 h como una sesión de 120 min en lugar de dos de 60: la ambigüedad de la iteración 2
+  reaparecida, y comercialmente al revés (partir el bloque salía más barato que corrido).
+  **Decisión/cambio:** v4.3 — cada bloque continuo es una sesión propia; la combinación de
+  sesiones aplica solo a tiempo continuo.
+- **Problema observado 3 (frontend):** una corrida corrió con el contrato cacheado por el
+  navegador (mismo conteo de tokens que la versión anterior). **Cambio:** todos los fetch
+  de contrato/precios/plantilla con `cache: no-store` — sin esto, un operador podría cotizar
+  con precios viejos después de una actualización.
+- **Verificación:** con v4.3, Guido reproduce **2/2** ($503.280 idéntico en modo, desglose y
+  totales; solo varía la redacción de alertas, admitido por el criterio del README).
+  Detalle completo: `corridas/corrida_v4_guido_reproducciones.md`.
+- **Comparación de modelos (misma entrada, mismo criterio):** flash-lite **falla** (atribuye
+  el precio acordado a la variante equivocada: $291.200), `gemini-3.6-flash` **pasa** (2/2),
+  el nivel pro no está en el free tier (cuota 0) y no hace falta: se opera con el más chico
+  que cumple. Detalle: `corridas/corrida_v4_comparacion_modelos.md`.
 
 ## Alcance, supuestos y pendientes
 
