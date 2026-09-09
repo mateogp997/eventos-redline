@@ -141,8 +141,7 @@
 <script>
 "use strict";
 /* Cotizador Redline — frontend del trabajo final. Sin dependencias.
-   Lee prompts/system_prompt.md y datos/precios.json del mismo origen (GitHub Pages o
-   servidor local); llama a la API del proveedor elegido directo desde el navegador. */
+   Lee prompts/system_prompt.md y datos/precios.json del mismo origen (servidor local); llama a la API del proveedor elegido directo desde el navegador. */
 
 const $ = id => document.getElementById(id);
 const fmt = n => "$" + Number(n||0).toLocaleString("es-AR");
@@ -206,8 +205,8 @@ async function cargarBase(){
     $("tagVersiones").textContent = "contrato v4.1 · precios " + v;
   }catch(e){
     $("tagVersiones").textContent = "error de carga";
-    setStatus("No pude leer prompts/system_prompt.md o datos/precios.json. Abrí la página desde GitHub Pages " +
-      "o con un servidor local (python -m http.server) — desde file:// el navegador bloquea la lectura.", true);
+    setStatus("No pude leer prompts/system_prompt.md o datos/precios.json. Abrí la página con un servidor local " +
+      "(python -m http.server) — desde file:// el navegador bloquea la lectura.", true);
     $("btnCotizar").disabled = true;
   }
 }
