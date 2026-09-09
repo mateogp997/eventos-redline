@@ -50,7 +50,9 @@ aparecen en `datos_faltantes`/`faltantes` en lugar de inventarse.
 
 ## Cómo correr una cotización
 
-**Requisitos:** un navegador y una API key de alguno de los dos proveedores soportados:
+**Requisitos:** un navegador de escritorio actual (probado en Chrome 130+ sobre Windows 11;
+las únicas dependencias de software, pdf-lib 1.17.1 y fontkit 1.1.1, están fijadas con
+versión en `index.html`) y una API key de alguno de los dos proveedores soportados:
 **Google Gemini** (gratis, con free tier: `aistudio.google.com` → "Get API key") o
 **Anthropic** (`console.anthropic.com`, requiere crédito). Sin instalación ni dependencias:
 el frontend es un único HTML estático.
