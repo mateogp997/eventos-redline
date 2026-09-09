@@ -2,7 +2,7 @@
   "version": "2026-09-06.1",
   "vigencia_desde": "2026-09-06",
   "moneda": "ARS",
-  "notas": "Fuente unica de precios del cotizador. El contrato (prompts/system_prompt.md) prohibe usar cualquier precio que no salga de este archivo. Editar este archivo NO requiere tocar el contrato; subir la version con cada cambio.",
+  "notas": "Fuente unica de precios del cotizador. El contrato (prompts/system_prompt.md) prohibe usar cualquier precio que no salga de este archivo. Editar este archivo NO requiere tocar el contrato; subir la version con cada cambio. OJO: el folleto de cumpleanos (datos/plantilla/propuesta_base.pdf) tiene precios VIEJOS y solo aporta el diseno de la propuesta en PDF - confirmado por el dueno el 8/9/2026.",
   "capacidad": {
     "simuladores": 8,
     "horario": "14:00-03:30",
