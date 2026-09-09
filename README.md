@@ -57,10 +57,10 @@ versión en `index.html`) y una API key de alguno de los dos proveedores soporta
 **Anthropic** (`console.anthropic.com`, requiere crédito). Sin instalación ni dependencias:
 el frontend es un único HTML estático.
 
-1. Abrir el frontend servido desde el repo — GitHub Pages
-   (`https://mateogp997.github.io/eventos-redline/`) o local:
-   `python -m http.server` en la raíz del repo y entrar a `http://localhost:8000`.
-   (Desde `file://` el navegador bloquea la lectura del contrato: usar una de las dos vías.)
+1. Abrir el frontend servido desde el repo: `python -m http.server` en la raíz del repo y
+   entrar a `http://localhost:8000` (o cualquier servidor estático equivalente — el sistema
+   se opera localmente por decisión de gobierno: no hay versión publicada).
+   (Desde `file://` el navegador bloquea la lectura del contrato: usar el servidor.)
 2. Elegir proveedor y pegar la API key (queda solo en el navegador del operador, en
    `localStorage`; **nunca** se versiona ni viaja a otro lado que la API del proveedor).
 3. Elegir modelo (default: `gemini-2.5-flash` en free tier; ver Análisis económico) —
